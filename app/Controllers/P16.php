@@ -49,4 +49,9 @@ class P16 extends BaseController
         $data['dataPerkara'] = $p16->getDataPerkaraJaksa($nip);
         return view('daftarJaksa/detail', $data);
     }
+
+    public function tambahSPDP()
+    {
+        return view('spdp/create');
+    }
 }

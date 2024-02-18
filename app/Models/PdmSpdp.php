@@ -12,7 +12,9 @@ class PdmSpdp extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_perkara','id_asalsurat','id_penyidik','no_surat','tgl_surat','tgl_terima','ket_kasus','tgl_kejadian_perkara','undang_pasal'];
+    protected $allowedFields    = ['id_perkara','id_asalsurat','id_penyidik','no_surat','tgl_surat','tgl_terima','ket_kasus',
+    'id_pk_ting_ref','wilayah_kerja','tgl_kejadian_perkara','undang_pasal','id_satker_tujuan','pkting','tempat_kejadian','proses_pelimpahan',
+    'id_sita','kode_pidana','tgl_sprindik','no_sprindik'];
 
     protected bool $allowEmptyInserts = false;
 
