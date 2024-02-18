@@ -16,8 +16,7 @@
     <!-- Custom Stylesheet -->
     <link href="<?= base_url('css/style.css') ?>" rel="stylesheet">
     <link href="<?= base_url('plugins/tables/css/datatable/dataTables.bootstrap4.min.css') ?>" rel="stylesheet">
-
-
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
 </head>
 
@@ -462,7 +461,7 @@
     <!-- Datamap -->
     <script src="<?= base_url('plugins/d3v3/index.js') ?>"></script>
     <script src="<?= base_url('plugins/topojson/topojson.min.js') ?>"></script>
-    <script src="<?= base_url('plugins/datamaps/datamaps.world.min.js') ?>"></script>
+    <!-- <script src="<?= base_url('plugins/datamaps/datamaps.world.min.js') ?>"></script> -->
     <!-- Morrisjs -->
     <script src="<?= base_url('plugins/raphael/raphael.min.js') ?>"></script>
     <script src="<?= base_url('plugins/morris/morris.min.js') ?>"></script>
@@ -475,7 +474,7 @@
 
 
 
-    <script src="<?= base_url('js/dashboard/dashboard-1.js') ?>"></script>
+    <!-- <script src="<?= base_url('js/dashboard/dashboard-1.js') ?>"></script> -->
 
     <!-- Datatable -->
     <script src="<?= base_url('plugins/tables/js/jquery.dataTables.min.js') ?>"></script>

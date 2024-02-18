@@ -4,26 +4,24 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PdmSpdp extends Model
+class PdmBerkasTahap1 extends Model
 {
-    protected $table            = 'pidum.pdm_spdp';
-    protected $primaryKey       = 'id_perkara';
-    protected $useAutoIncrement = false;
+    protected $table            = 'pdmberkastahap1s';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_perkara','id_asalsurat','id_penyidik','no_surat','tgl_surat','tgl_terima',
-    'ket_kasus','id_pk_ting_ref','wilayah_kerja','tgl_kejadian_perkara','undang_pasal','created_by','kode_pidana',
-    'tgl_sprindik','no_sprindik','ur_ip','ur_ipp','id_kejati','id_kejari','id_cabjari'];
+    protected $allowedFields    = [];
 
     protected bool $allowEmptyInserts = false;
 
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_time';
-    protected $updatedField  = 'updated_time';
-    // protected $deletedField  = 'deleted_at';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];

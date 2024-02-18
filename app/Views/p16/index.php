@@ -23,6 +23,7 @@
                         <h4 class="card-title">Data P16</h4>
 
                         <div class="table-responsive">
+                            <a class="btn btn-primary" href="<?= route_to('tambahSPDP') ?>" role="button">Tambah</a>
                             <table class="table table-striped table-bordered zero-configuration">
                                 <thead>
                                     <tr>
@@ -68,22 +69,7 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            $(document).ready(function() {
-                new DataTable('#p16', {
-                    order: [],
-                    processing: true,
-                    responsive: true,
-                });
-
-                var newButton = $('<a class="ml-5 btn btn-primary" href="<?= base_url('tambahSPDP'); ?>" role="button">Tambah</a>');
-                $('#p16_filter label').after(newButton);
-            });
-        </script>
-
     </div>
     <!-- #/ container -->
 </div>
-
 <?= $this->endSection() ?>
