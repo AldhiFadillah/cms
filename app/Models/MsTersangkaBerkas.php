@@ -4,16 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PdmBerkasTahap1 extends Model
+class MsTersangkaBerkas extends Model
 {
-    protected $table            = 'pidum.pdm_berkas_tahap1';
-    protected $primaryKey       = 'id_berkas';
+    protected $table            = 'pidum.ms_tersangka_berkas';
+    protected $primaryKey       = 'id_tersangka';
     protected $useAutoIncrement = false;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_berkas','id_perkara','no_berkas','tgl_berkas','created_by','created_ip','created_time','updated_time'
-    ,'id_kejati','id_kejari','id_cabjari'];
+    protected $allowedFields    = ['id_tersangka','id_berkas','no_pengantar','tmpt_lahir','tgl_lahir','alamat','no_identitas',
+    'warganegara','pekerjaan','suku','nama','id_jkl','id_identitas','id_agama','id_pendidikan','umur','no_urut','id_pengantar',
+    'id_status','id_kejati','id_kejari','id_cabjari'];
 
     protected bool $allowEmptyInserts = false;
 

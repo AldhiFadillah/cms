@@ -12,7 +12,8 @@ class PdmP16 extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_p16','id_perkara','no_surat','dikeluarkan','tgl_dikeluarkan','id_penandatangan','nama','pangkat','jabatan'];
+    protected $allowedFields    = ['id_p16','id_perkara','no_surat','dikeluarkan','tgl_dikeluarkan','id_penandatangan',
+    'created_by','created_time','updated_time','nama','pangkat','jabatan','id_kejati','id_kejari','id_cabjari'];
 
     protected bool $allowEmptyInserts = false;
 

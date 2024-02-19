@@ -4,16 +4,16 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PdmBerkasTahap1 extends Model
+class PdmPengantarTahap1 extends Model
 {
-    protected $table            = 'pidum.pdm_berkas_tahap1';
-    protected $primaryKey       = 'id_berkas';
+    protected $table            = 'pidum.pdm_pengantar_tahap1';
+    protected $primaryKey       = 'id_pengantar';
     protected $useAutoIncrement = false;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_berkas','id_perkara','no_berkas','tgl_berkas','created_by','created_ip','created_time','updated_time'
-    ,'id_kejati','id_kejari','id_cabjari'];
+    protected $allowedFields    = ['id_pengantar','id_berkas','no_pengantar','tgl_pengantar','tgl_terima','created_by','created_ip',
+    'created_time','updated_time','id_kejati','id_kejari','id_cabjari'];
 
     protected bool $allowEmptyInserts = false;
 

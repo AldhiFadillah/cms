@@ -1,7 +1,6 @@
 <?= $this->extend('layout/page_layout') ?>
 
 <?= $this->section('content') ?>
-
     <!-- Modal -->
     <div id="exampleModalLive" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" style="display: none; opacity:100;" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -65,7 +64,7 @@
                                     Nomor :
                                 </div>
                                 <div class="col-10">
-                                    <input type="text" class="form-control" id="formGroupExampleInput">
+                                    <input type="text" class="form-control" id="noP16">
                                 </div>
                             </div>
                         </div>
@@ -85,10 +84,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <!-- <td>1</td> -->
-                                                <td>ALDI KONDIHI Alias ALDI</td>
-                                            </tr>
+                                            <?php
+                                            foreach (json_decode($dataTersangka) as $data) { ?>
+                                                <tr>
+                                                    <td><?= $data->nama; ?></td>
+                                                </tr>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -121,8 +122,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <button type="button" class="btn btn-primary">Simpan</button>
-                        <button type="button" class="btn btn-danger">Batal</button>
+                        <button type="button" class="btn btn-primary" id="simpanP16-btn">Simpan</button>
+                        <a class="btn btn-danger" href="<?= route_to('p16') ?>" role="button">Batal</a>
                     </div>
                 </form>
             </div>
@@ -229,6 +230,32 @@
                 });
 
                 dtJaksa.rows('.selected').remove().draw(false);
+            });
+
+            $('#simpanP16-btn').click(function() {
+                var data = {
+                    dataJaksa: nipJaksa,
+                    noP16: $('#noP16').val(),
+                    id_perkara: '<?= $IDPerkaraSPDPBaru; ?>',
+                    dataSPDP: '<?= $dataSPDP; ?>',
+                    dataBerkasThp1: '<?= $dataBerkasThp1; ?>',
+                    dataPengantarThp1: '<?= $dataPengantarThp1; ?>',
+                    dataTersangka: '<?= $dataTersangka; ?>'
+                    // Tambahkan data lainnya sesuai kebutuhan
+                };
+
+                $.ajax({
+                    url: '<?= route_to('simpanP16Jaksa') ?>', // Ganti dengan URL yang sesuai
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        console.log(response); // Tindakan lanjutan setelah berhasil
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); // Tangani kesalahan jika terjadi
+                    }
+                });
             });
         });
     </script>

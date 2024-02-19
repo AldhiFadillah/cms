@@ -10,3 +10,4 @@ $routes->get('p16', 'P16::index');
 $routes->get('daftarJaksa', 'P16::daftarJaksa');
 $routes->get("dataJaksa/(:any)", "P16::detailJaksa/$1");
 $routes->get('tambahSPDP', 'P16::tambahSPDP');
+$routes->post('simpanP16Jaksa', 'P16::simpanP16Jaksa');

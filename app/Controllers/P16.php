@@ -10,6 +10,9 @@ use App\Models\PdmP16;
 use App\Models\PdmSpdp;
 use App\Models\PdmJaksaP16;
 use App\Models\Pegawai;
+use App\Models\PdmBerkasTahap1;
+use App\Models\PdmPengantarTahap1;
+use App\Models\MsTersangkaBerkas;
 
 class P16 extends BaseController
 {
@@ -52,6 +55,202 @@ class P16 extends BaseController
 
     public function tambahSPDP()
     {
+        $dataSPDP = $this->addDataSPDP();
+        $dataBerkasThp1 = $this->addDataBerkasThp1($dataSPDP['id_perkara']);
+        $dataPengantarThp1 = $this->addDataPengantarTahap1($dataBerkasThp1['id_berkas']);
+        $dataTersangka = $this->addDataTersangkaBerkas($dataPengantarThp1['id_pengantar'], $dataPengantarThp1['id_berkas'], $dataPengantarThp1['no_pengantar']);
+
+        $db = db_connect();
+        $data['IDPerkaraSPDPBaru'] = $dataSPDP['id_perkara'];
+        $data['tgl_Surat'] = $dataSPDP['tgl_surat'];
+        $data['tgl_Terima'] = $dataSPDP['tgl_terima'];
+        $data['dataJaksa'] = $db->table('pidum.vw_dataJaksa')->select('nip_nrp, nama, golpang, jabatan, nip')->get()->getResultArray();
+        $data['dataTersangka'] = json_encode($dataTersangka);
+        $data['dataPengantarThp1'] = json_encode($dataPengantarThp1);
+        $data['dataBerkasThp1'] = json_encode($dataBerkasThp1);
+        $data['dataSPDP'] = json_encode($dataSPDP);
+        
+        return view('spdp/create', $data);
+    }
+
+    public function simpanP16Jaksa()
+    {
+        $request = $this->request->getJSON(); // Ambil data JSON dari permintaan AJAX
+        $spdp = new PdmSpdp();
+        $spdp->insert(json_decode($request->dataSPDP));
+        // $p16 = $this->addDataP16($request);
+        // $this->addDataJaksaP16($request->dataJaksa, $p16['id_p16'], $p16['id_perkara']);
+
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Data Tersimpan']);
+    }
+
+    private function addDataJaksaP16($dataJaksa, $idP16, $id_perkara){
+        $jp16 = new PdmJaksaP16();
+        $i = 1;
+
+        foreach ($dataJaksa as $nipJaksa) {
+            $peg = new Pegawai();
+            $jaksa = $peg->where('peg_nip_baru', $nipJaksa)->first();
+
+            $dataJP16 = [
+                'id_jpp' => $idP16."|".$i,
+                'id_perkara' => $id_perkara,
+                'id_p16' => $idP16,
+                'nip' => $nipJaksa,
+                'nama' => $jaksa['nama'],
+                'jabatan' => $jaksa['jabatan'],
+                'pangkat' => $jaksa['gol_pangkat2'],
+                'no_urut' => $i++,
+                'id_kejati' => '13',
+                'id_kejari' => '32',
+                'id_cabjari' => '00'
+            ];
+            
+            // $jp16->insert($dataJP16);
+        }
+    }
+
+    private function addDataP16($request){
+        $p16 = new PdmP16();
+        $jumlahDataTerakhir = $p16->countAllResults() + 1;
+        $idP16 = dechex($jumlahDataTerakhir);
+
+        $dataP16 = [
+            'id_p16' => $idP16,
+            'id_perkara' => $request->id_perkara,
+            'no_surat' => $request->noP16,
+            'dikeluarkan' => 'KRAKSAAN',
+            'tgl_dikeluarkan' => date('Y-m-d'),
+            'id_penandatangan' => '197606081996031001',
+            'created_by' => '199712072018012001',
+            'created_time' => date('Y-m-d H:i:s'),
+            'updated_time' => date('Y-m-d H:i:s'),
+            'nama' => 'DAVID P. DUARSA, S.H., M.H.',
+            'pangkat' => 'Jaksa Madya',
+            'jabatan' => 'KEPALA KEJAKSAAN NEGERI KABUPATEN PROBOLINGGO',
+            'id_kejati' => '13',
+            'id_kejari' => '32',
+            'id_cabjari' => '00'
+        ];
+        
+        // $p16->insert($dataP16);
+
+        return $dataP16;
+    }
+
+    private function addDataTersangkaBerkas($id_pengantar, $id_berkas, $no_pengantar){
+        $tskBerkas = new MsTersangkaBerkas();
+        
+        $jmlTersangka = rand(1, 2);
+
+        $dataTersangka = array();
+
+        for ($i = 1; $i <= $jmlTersangka; $i++) {
+            $faker = \Faker\Factory::create('id_ID');
+
+            $tersangka = [
+                'id_tersangka' => $id_pengantar."|".$i,
+                'id_berkas' => $id_berkas,
+                'no_pengantar' => $no_pengantar,
+                'tmpt_lahir' => $faker->city(),
+                'alamat' => $faker->address(),
+                'no_identitas' => 3513121607740002 + rand(1, 500) + rand(1, 1500) + rand(1, 1000500) + rand(1, 1000000500) + rand(1, 1000000000500),
+                'warganegara' => '71',
+                'pekerjaan' => '88',
+                'suku' => '-',
+                'nama' => $faker->name(),
+                'id_jkl' => rand(1, 2),
+                'id_identitas' => rand(1, 2),
+                'id_agama' => rand(1, 5),
+                'id_pendidikan' => rand(1, 5),
+                'umur' => rand(18, 50),
+                'no_urut' => $i,
+                'id_pengantar' => $id_pengantar,
+                'id_status' => '2',
+                'id_kejati' => '13',
+                'id_kejari' => '32',
+                'id_cabjari' => '00'
+            ];
+            // dd($tersangka);
+
+            array_push($dataTersangka, $tersangka);
+            
+            // Insert data ke database
+            // $tskBerkas->insert($tersangka);
+        }
+        return $dataTersangka;
+    }
+
+    private function addDataPengantarTahap1($id_berkas){
+        $pengantarThp1 = new PdmPengantarTahap1();
+        $lastPengantarTahap1 = $pengantarThp1->orderBy('created_time', 'DESC')->first();
+
+        // Menemukan angka di dalam string
+        preg_match('/\d+/', $lastPengantarTahap1['no_pengantar'], $matches);
+        // Menambahkan 1 ke angka yang ditemukan
+        $angka_baru = $matches[0] + 1;
+        // Mengganti angka lama dengan angka baru dalam string
+        $no_PengantarTahap1Baru = preg_replace('/\d+/', $angka_baru, $lastPengantarTahap1['no_pengantar'], 1);
+
+        $dataPengantarTahap1 = [
+            'id_pengantar' => $id_berkas. '|' .$no_PengantarTahap1Baru,
+            'id_berkas' => $id_berkas,
+            'no_pengantar' => $no_PengantarTahap1Baru,
+            'tgl_pengantar' => date('Y-m-d', strtotime('-1 days')),
+            'tgl_terima' => date('Y-m-d'),
+            'created_by' => '199712072018012001',
+            'created_ip' => '10.16.32.16',
+            'created_time' => date('Y-m-d H:i:s'),
+            'updated_time' => date('Y-m-d H:i:s'),
+            'id_kejati' => '13',
+            'id_kejari' => '32',
+            'id_cabjari' => '00'
+        ];
+
+        // $pengantarThp1->insert($dataPengantarTahap1);
+
+        return $dataPengantarTahap1;
+    }
+    
+    private function addDataBerkasThp1($id_perkara){
+        $berkasThp1 = new PdmBerkasTahap1();
+        $lastBerkasThp1 = $berkasThp1->orderBy('created_time', 'DESC')->first();
+
+        // Pisahkan angka dari string
+        preg_match('/(\d+)BP/', $lastBerkasThp1['id_berkas'], $matches);
+        $angka = isset($matches[1]) ? $matches[1] : '';
+        // Tambahkan 1 pada angka
+        $angka_baru = $angka + 1;
+        // Gabungkan angka baru dengan sisa string
+        $IDBerkasBaru = preg_replace('/\d+BP/', $angka_baru . 'BP', $lastBerkasThp1['id_berkas'], 1);
+
+        // Menemukan angka di dalam string
+        preg_match('/\d+/', $lastBerkasThp1['no_berkas'], $matches);
+        // Menambahkan 1 ke angka yang ditemukan
+        $angka_baru = $matches[0] + 1;
+        // Mengganti angka lama dengan angka baru dalam string
+        $no_BerkasBaru = preg_replace('/\d+/', $angka_baru, $lastBerkasThp1['no_berkas'], 1);
+
+        $dataBerkasThp1 = [
+            'id_berkas' => $IDBerkasBaru,
+            'id_perkara' => $id_perkara,
+            'no_berkas' => $no_BerkasBaru,
+            'tgl_berkas' => date('Y-m-d', strtotime('-2 days')),
+            'created_by' => '199712072018012001',
+            'created_ip' => '10.16.32.16',
+            'created_time' => date('Y-m-d H:i:s'),
+            'updated_time' => date('Y-m-d H:i:s'),
+            'id_kejati' => '13',
+            'id_kejari' => '32',
+            'id_cabjari' => '00'
+        ];
+
+        // $berkasThp1->insert($dataBerkasThp1);
+
+        return $dataBerkasThp1;
+    }
+
+    private function addDataSPDP(){
         $spdp = new PdmSpdp();
         $lastSPDP = $spdp->orderBy('created_time', 'DESC')->first();
         
@@ -107,12 +306,6 @@ class P16 extends BaseController
 
         // $spdp->insert($dataSPDP);
 
-        $db = db_connect();
-        $data['IDPerkaraSPDPBaru'] = $IDPerkaraSPDPBaru;
-        $data['tgl_Surat'] = $tgl_Surat;
-        $data['tgl_Terima'] = $tgl_Terima;
-        $data['dataJaksa'] = $db->table('pidum.vw_dataJaksa')->select('nip_nrp, nama, golpang, jabatan, nip')->get()->getResultArray();
-
-        return view('spdp/create', $data);
+        return $dataSPDP;
     }
 }

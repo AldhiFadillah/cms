@@ -12,7 +12,8 @@ class PdmJaksaP16 extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_jpp','id_perkara','id_p16','nip','nama','jabatan','pangkat'];
+    protected $allowedFields    = ['id_jpp','id_perkara','id_p16','nip','nama','jabatan','pangkat','no_urut','id_kejati',
+    'id_kejari','id_cabjari'];
 
     protected bool $allowEmptyInserts = false;
 
