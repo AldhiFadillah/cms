@@ -250,10 +250,22 @@
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function(response) {
-                        console.log(response); // Tindakan lanjutan setelah berhasil
+                        // Tindakan lanjutan setelah berhasil
+                        if (response.status === 'success') {
+                            // Jika respons berhasil, tampilkan pesan sukses
+                            alert(response.message);
+                            // Redirect ke halaman lain atau sebelumnya
+                            window.location.href = '<?= route_to('p16') ?>'; // Ganti dengan URL tujuan
+                        } else {
+                            // Jika respons gagal, tampilkan pesan error
+                            alert(response.message);
+                        }
                     },
                     error: function(xhr, status, error) {
-                        console.error(error); // Tangani kesalahan jika terjadi
+                        // Tangani kesalahan jika terjadi
+                        console.error(error);
+                        // Tampilkan pesan kesalahan
+                        alert('Terjadi kesalahan saat memproses permintaan.');
                     }
                 });
             });

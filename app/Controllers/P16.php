@@ -78,13 +78,104 @@ class P16 extends BaseController
         $request = $this->request->getJSON(); // Ambil data JSON dari permintaan AJAX
         $spdp = new PdmSpdp();
         $spdp->insert(json_decode($request->dataSPDP));
-        // $p16 = $this->addDataP16($request);
-        // $this->addDataJaksaP16($request->dataJaksa, $p16['id_p16'], $p16['id_perkara']);
+
+        $berkasThp1 = new PdmBerkasTahap1();
+        $berkasThp1->insert(json_decode($request->dataBerkasThp1));
+
+        $pengantarThp1 = new PdmPengantarTahap1();
+        $pengantarThp1->insert(json_decode($request->dataPengantarThp1));
+        
+        foreach (json_decode($request->dataTersangka) as $tersangka) {
+            $tskBerkas = new MsTersangkaBerkas();
+            $tskBerkas->insert($tersangka);
+        }
+
+        $p16 = $this->addDataP16($request);
+        $dataJaksaP16 = $this->addDataJaksaP16($request->dataJaksa, $p16['id_p16'], $p16['id_perkara']);
+
+        // consume API
+        $token = $this->getToken();
+
+        $respInputData = $this->ConsumeAPIInsertDataP16(json_decode($token, true)['token'], 
+        json_decode($request->dataSPDP), json_decode($request->dataBerkasThp1), json_decode($request->dataPengantarThp1), 
+        json_decode($request->dataTersangka), $p16, $dataJaksaP16);
 
         return $this->response->setJSON(['status' => 'success', 'message' => 'Data Tersimpan']);
     }
 
+    private function ConsumeAPIInsertDataP16($token, $spdp, $berkasThp1, $pengantarThp1, $dataTersangka, $p16, $jaksaP16){
+        // URL API
+        $url = env('API_URL')."/api/inputDataPerkara";
+
+        $client = service('curlrequest');
+
+        // Set header Authorization dengan bearer token
+        $headers = [
+            'Authorization' => 'Bearer '.$token,
+            'Content-Type' => 'application/json', // Sesuaikan dengan tipe konten yang sesuai
+        ];
+
+        // Set data yang akan dikirim (jika diperlukan)
+        $data = [
+            'dataSPDP' => $spdp,
+            'dataBerkasThp1' => $berkasThp1,
+            'dataPengantarThp1' => $pengantarThp1,
+            'dataTersangka' => $dataTersangka,
+            'dataP16' => $p16,
+            'dataJaksaP16' => $jaksaP16,
+        ];
+
+        // Lakukan request POST dengan bearer token
+        $response = $client->request('POST', $url, [
+            'headers' => $headers,
+            'json' => $data, // Menggunakan json untuk mengirim data dalam format JSON
+        ]);
+
+        // Lakukan sesuatu dengan respons
+        // echo $response->getBody();
+    }
+
+    private function getToken(){
+        // URL API
+        $url = env('API_URL')."/api/login";
+        
+        // Data yang akan dikirim dalam body permintaan (misalnya dalam format JSON)
+        $data = [
+            'email' => env('API_USERNAME'),
+            'password' => env('API_PASSWORD')
+        ];
+
+        // Menginisialisasi session cURL
+        $ch = curl_init();
+
+        // Set opsi cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json'
+        ]);
+
+        // Jalankan permintaan cURL
+        $response = curl_exec($ch);
+
+        // Periksa apakah ada kesalahan
+        if(curl_errno($ch)){
+            echo 'Error: ' . curl_error($ch);
+        }
+
+        // Tutup session cURL
+        curl_close($ch);
+
+        // Tampilkan respons
+        // echo $response;
+
+        return $response;
+    }
+
     private function addDataJaksaP16($dataJaksa, $idP16, $id_perkara){
+        $dataJaksaP16 = [];
         $jp16 = new PdmJaksaP16();
         $i = 1;
 
@@ -106,8 +197,11 @@ class P16 extends BaseController
                 'id_cabjari' => '00'
             ];
             
-            // $jp16->insert($dataJP16);
+            $jp16->insert($dataJP16);
+            array_push($dataJaksaP16, $dataJP16);
         }
+
+        return $dataJaksaP16;
     }
 
     private function addDataP16($request){
@@ -133,7 +227,7 @@ class P16 extends BaseController
             'id_cabjari' => '00'
         ];
         
-        // $p16->insert($dataP16);
+        $p16->insert($dataP16);
 
         return $dataP16;
     }

@@ -112,7 +112,8 @@
                             <table class="table table-striped table-bordered zero-configuration" id="dataPerkara">
                                 <thead>
                                     <tr>
-                                        <th>Nomor P16 dan Tanggal</th>
+                                        <th>Nomor P16</th>
+                                        <th>Tanggal</th>
                                         <th>Kasus</th>
                                         <th>UU dan Pasal</th>
                                         <th>Nama Tersangka</th>
@@ -122,7 +123,8 @@
                                     <?php
                                     foreach ($dataPerkara as $data) { ?>
                                         <tr>
-                                            <td><?= $data['no_surat']; ?> tanggal <?= $data['tgl_dikeluarkan']; ?></td>
+                                            <td><?= $data['no_surat']; ?></td>
+                                            <td><?= $data['tgl_dikeluarkan']; ?></td>
                                             <td><?= $data['ket_kasus']; ?></td>
                                             <td><?= $data['undang_pasal']; ?></td>
                                             <td><?= $data['nama']; ?></td>
@@ -137,16 +139,6 @@
 
         </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            new DataTable('#dataPerkara', {
-                order: [],
-                processing: true,
-                responsive: true,
-            });
-        });
-    </script>
-
 </div>
 <!-- #/ container -->
 </div>
